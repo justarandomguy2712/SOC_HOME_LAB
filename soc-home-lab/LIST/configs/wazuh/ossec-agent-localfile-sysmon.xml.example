@@ -1,0 +1,5 @@
+<!-- Them vao C:\Program Files (x86)\ossec-agent\ossec.conf, truoc the </ossec_config> cuoi cung -->
+<localfile>
+  <location>Microsoft-Windows-Sysmon/Operational</location>
+  <log_format>eventchannel</log_format>
+</localfile>
