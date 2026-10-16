@@ -4,12 +4,12 @@ flowchart LR
     W["Wazuh all-in-one<br/>Ubuntu 22.04.5<br/>ens34 10.10.10.10"]
     WIN["Windows 10 Pro<br/>Wazuh Agent + Sysmon<br/>10.10.10.20"]
   end
-  NAT["VMnet8 NAT<br/>chi dung de tai goi"]
+  NAT["VMnet8 NAT<br/>For downloading packages"]
   WIN -->|1514/tcp, 1515/tcp| W
   Host -->|443/tcp| W
   W -. ens33 .-> NAT
   WIN -. NIC 2 .-> NAT
-  subgraph Planned["Phase 5 (chua trien khai)"]
+  subgraph Planned["Phase 5 (Coming soon)"]
     PF["pfSense"]
     K["Kali CLI"]
   end
