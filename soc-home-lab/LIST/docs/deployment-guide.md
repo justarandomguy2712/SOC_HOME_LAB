@@ -80,7 +80,7 @@ Tác dụng: Mở rộng Logical Volume (LV) bằng toàn bộ dung lượng cò
 
 Mật khẩu `admin` do installer sinh ra, lưu trong trình quản lý mật khẩu, không đưa vào repo.
 
-**Lý do tại sao phải tắt Vulnerability Detection**:
+### **Lý do tại sao phải tắt Vulnerability Detection**:
 
 
 Do trong quá trình cài đặt thì module Vulnerability Detection của Wazuh Manager tải và giải nén kho CVE (~17 GB) ngay khi manager khởi động, làm đầy ổ 28 GB. Đĩa đầy khiến indexer không phản hồi, nên securityadmin bị timeout. 
@@ -134,7 +134,7 @@ sudo du -xh / --max-depth=5 2>/dev/null | sort -rh | head -15
 </p>
 
 
-**Giải thích câu lệnh tắt Vulnerability Detection**
+ **Giải thích câu lệnh tắt Vulnerability Detection**
 
 ```
 until sudo test -f /var/ossec/etc/ossec.conf; do sleep 1; done; sudo sed -i '/<vulnerability-detection>/,/<\/vulnerability-detection>/ s#<enabled>yes</enabled>#<enabled>no</enabled>#' /var/ossec/etc/ossec.conf && echo DONE
@@ -168,6 +168,36 @@ flowchart TD
     H --> J([Hoàn tất])
 ```
 
+**Giải thích câu lệnh kiểm tra sau khi đã cấu hình**
+
+```bash
+sudo systemctl is-active wazuh-manager wazuh-indexer wazuh-dashboard filebeat; df -h / | tail -1; du -sh /var/ossec; sudo grep -A3 "<vulnerability-detection>" /var/ossec/etc/ossec.conf
+```
+
+
+| Command | Meaning |
+|---|---|
+| ```systemctl is-active``` | Kiểm tra trạng thái hoạt động của các services. |
+| ```wazuh-manager``` | Dịch vụ quản lý và phân tích bảo mật. |
+| ```wazuh-indexer``` | Dịch vụ lưu trữ và lập chỉ mục dữ liệu. |
+| ``` filebeat``` | Chuyển tiếp dữ liệu log đến Wazuh Indexer. |
+| ``` df -h /``` | Kiểm tra dung lượng tổng. |
+| ```tail -1``` | Chỉ hiển thị dòng cuối cùng của kết quả df. |
+| ``` grep -A3 "<vulnerability-detection>``` | Tìm thẻ cấu hình vulnerability-detection và hiển thị thêm 3 dòng phía sau.|
+
+
+<p align="center">
+<img width="1092" height="253" alt="Screenshot 2026-10-14 195354" src="https://github.com/user-attachments/assets/caff6205-ee48-43cc-882d-f51e7796a2dc" />
+  <br>
+  <em>Hình 4: Kiểm tra trạng thái dịch vụ Wazuh, dung lượng ổ đĩa và cấu hình Vulnerability Detection  </em>
+</em>
+</p>
+
+
+
+
+
+
 
 
 
@@ -181,7 +211,59 @@ flowchart TD
 | 3 | Kiểm tra mạng | `Test-NetConnection 10.10.10.10 -Port 1514` và `-Port 1515` | `TcpTestSucceeded : True` |
 | 4 | Wazuh Agent | Dashboard > Agents > Deploy new agent (Windows, MSI, server `10.10.10.10`, name `win10-endpoint`); dán khối lệnh vào PowerShell Admin; `NET START WazuhSvc` | Agent trạng thái Active |
 | 5 | Sysmon | `Invoke-WebRequest -Uri "https://download.sysinternals.com/files/Sysmon.zip" -OutFile "C:\Lab\Sysmon.zip"`; giải nén; tải `sysmonconfig-export.xml` của SwiftOnSecurity; `Sysmon64.exe -accepteula -i sysmonconfig.xml` | `Get-Service Sysmon64` Running |
-| 6 | Cho Wazuh đọc Sysmon | Thêm khối `<localfile>` (xem `configs/wazuh/`), `Restart-Service WazuhSvc` | Sự kiện Sysmon xuất hiện trong Discover |
+| 6 | Cho Wazuh đọc Sysmon | Thêm khối `<localfile>` (xem tại https://github.com/justarandomguy2712/SOC_HOME_LAB/blob/8605b3afd5b22d07e5027bea0820ba72eff53611/soc-home-lab/LIST/configs/wazuh/ossec-agent-localfile-sysmon.xml.example), `Restart-Service WazuhSvc` | Sự kiện Sysmon xuất hiện trong Discover |
 | 7 | Sự kiện thử | `whoami`, `hostname`, đăng nhập sai | Có ID 1, 11 và 4625 trong Discover |
 
-Lỗi đã gặp khi dán lệnh nhiều dòng: xem mục sự cố trong báo cáo.
+
+
+
+
+<p align="center">
+<img width="833" height="506" alt="Screenshot 2026-10-15 224440" src="https://github.com/user-attachments/assets/f84081e7-61d2-457b-90c1-19889458e4e7" />
+  <br>
+  <em>Hình 5: Tải và giải nén các services Sysmon  </em>
+</em>
+</p>
+
+### Mở tệp cấu hình Wazuh Agent với quyền Administrator trên Windows
+
+
+```bash
+Start-Process notepad.exe -Verb RunAs -ArgumentList '"C:\Program Files (x86)\ossec-agent\ossec.conf"'
+```
+
+ + Start-Process: Khởi chạy một tiến trình mới trong PowerShell.
+
+
+
+ + notepad.exe: Mở trình soạn thảo Notepad.
+
+
+
+ + -Verb RunAs: Chạy chương trình với quyền quản trị viên (Administrator), hiển thị yêu cầu UAC nếu cần.
+
+
+
++ -ArgumentList: Truyền đường dẫn tệp cần mở cho Notepad.
+
+
+
++ "C:\Program Files (x86)\ossec-agent\ossec.conf": Đường dẫn đến tệp cấu hình Wazuh Agent trên Windows.
+
+
+
++ Dấu nháy đơn và dấu nháy kép lồng nhau: Giúp truyền toàn bộ đường dẫn có chứa khoảng trắng thành một đối số duy nhất.
+
+
+#### 1. Sau khi vào file thì ta mở notepad -> nhấn Ctrl+End, tìm thẻ </ossec_config> cuối cùng 
+
+#### 2. Dán ngay trước </ossec_config> với dòng lệnh sau:
+``` 
+<localfile>
+<location>Microsoft-Windows-Sysmon/Operational</location>
+<log_format>eventchannel</log_format>
+</localfile>
+```
+Khối lệnh phải nằm trong trong cặp <ossec_config>...</ossec_config>
+
+#### 3. PowerShell (Admin) -> Restart-Service WazuhSvc -> NO ERROR
