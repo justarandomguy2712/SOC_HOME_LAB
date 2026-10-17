@@ -152,7 +152,7 @@ until sudo test -f /var/ossec/etc/ossec.conf; do sleep 1; done; sudo sed -i '/<v
 | ``` && echo DONE``` | In DONE nếu lệnh chỉnh sửa hoàn tất thành công.. |
 
 
-
+**Workflow của câu lệnh**
 
 ```mermaid
 flowchart TD
