@@ -1,6 +1,6 @@
 # Hướng dẫn triển khai (Phase 1-3)
 
-Ghi chú: các lệnh dưới đây là các lệnh đã chạy trong quá trình xây lab. Phiên bản phần mềm thay đổi theo thời gian; đối chiếu với tài liệu chính thức trước khi dùng lại.
+Ghi chú: các lệnh dưới đây là các lệnh đã chạy trong quá trình xây lab. Phiên bản phần mềm thay đổi theo thời gian, đối chiếu với tài liệu chính thức trước khi dùng lại.
 
 ## Phase 1: Preparation
 
@@ -14,6 +14,59 @@ Ghi chú: các lệnh dưới đây là các lệnh đã chạy trong quá trìn
 | 6 | Mở rộng `/` | `sudo lvextend -r -l +100%FREE /dev/ubuntu-vg/ubuntu-lv`; nếu `df -h /` chưa tăng: `sudo resize2fs /dev/ubuntu-vg/ubuntu-lv` | `df -h /` hiện khoảng 28 GB |
 | 7 | Cập nhật và snapshot | `sudo apt update && sudo apt -y upgrade`, shutdown, snapshot `clean-base-p1` | Snapshot có trong Snapshot Manager |
 
+
+**Giải thích nhanh ý nghĩa 4 câu lệnh**:
+
+| Command | Meaning |
+|---|---|
+| ```ip -br a``` | Hiển thị nhanh các card mạng, địa chỉ IP và trạng thái kết nối |
+| ```df -h``` | Kiểm tra dung lượng ổ đĩa của phân vùng gốc /, gồm tổng dung lượng, đã sử dụng và còn trống |
+| ```lsblk``` | Liệt kê các thiết bị lưu trữ, phân vùng và cấu trúc ổ đĩa. |
+| ``` ping -c3 10.10.10.1``` | Gửi 3 gói tin ICMP đến địa chỉ 10.10.10.1 để kiểm tra khả năng kết nối mạng. |
+
+**Giải thích 2 câu lệnh mở rộng dung lượng ổ đĩa**:
+
+```bash
+sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
+```
+- Chức năng: Mở rộng hệ thống tệp ext2/ext3/ext4 để sử dụng dung lượng khả dụng của phân vùng Logical Volume.
+- sudo: Thực thi lệnh với quyền quản trị.
+- resize2fs: Công cụ thay đổi kích thước hệ thống tệp.
+- /dev/ubuntu-vg/ubuntu-lv: Đường dẫn đến Logical Volume cần mở rộng.
+Lưu ý: Lệnh này không tự mở rộng dung lượng Logical Volume. Nếu Logical Volume chưa được mở rộng lên 30 GB, cần tăng kích thước Logical Volume trước, sau đó mới chạy resize2fs.
+
+```bash
+sudo lvextend -r -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+```
+Tác dụng: Mở rộng Logical Volume (LV) bằng toàn bộ dung lượng còn trống trong Volume Group (VG), đồng thời tự mở rộng filesystem.
+- sudo: Chạy lệnh với quyền quản trị.
+- lvextend: Mở rộng Logical Volume.
+- -r: Tự động mở rộng filesystem tương ứng sau khi tăng dung lượng LV.
+- -l: Chỉ định dung lượng theo số lượng Logical Extents.
+- +100%FREE: Sử dụng 100% dung lượng còn trống trong Volume Group.
+- /dev/ubuntu-vg/ubuntu-lv: Đường dẫn đến Logical Volume cần mở rộng.
+
+
+
+
+
+
+
+<p align="center">
+<img width="813" height="95" alt="Screenshot 2026-10-14 142605" src="https://github.com/user-attachments/assets/ff005246-4f8b-4ed9-a479-992d386f59d4" />
+  <br>
+  <em>Hình 1: Dung lượng ổ đĩa sau khi mở rộng hệ thống tệp  </em>
+</em>
+</p>
+
+
+
+
+
+
+
+
+
 ## Phase 2: Wazuh all-in-one
 
 | # | Việc | Lệnh | Xác minh |
@@ -26,6 +79,98 @@ Ghi chú: các lệnh dưới đây là các lệnh đã chạy trong quá trìn
 | 6 | Dashboard | `https://10.10.10.10` (chứng chỉ tự ký) | Đăng nhập được |
 
 Mật khẩu `admin` do installer sinh ra, lưu trong trình quản lý mật khẩu, không đưa vào repo.
+
+**Lý do tại sao phải tắt Vulnerability Detection**:
+
+
+Do trong quá trình cài đặt thì module Vulnerability Detection của Wazuh Manager tải và giải nén kho CVE (~17 GB) ngay khi manager khởi động, làm đầy ổ 28 GB. Đĩa đầy khiến indexer không phản hồi, nên securityadmin bị timeout. 
+
+
+
+ <p align="center">
+<img width="1428" height="739" alt="Screenshot 2026-10-14 145751" src="https://github.com/user-attachments/assets/1e838b51-7fd0-43ef-84b1-bd7f97927185" />
+  <br>
+  <em>Hình 2: Quá trình cài đặt Wazuh Dashboard bị treo do hết dung lượng  </em>
+</em>
+</p>
+
+Sau đó, kiểm tra dung lượng bằng câu lệnh sau xem 15 thư mục nào chiếm nhiều dung lượng nhất trong hệ thống Linux để xác định vị trí cần giải phóng bộ nhớ lưu trữ.
+
+```bash
+sudo du -xh / --max-depth=5 2>/dev/null | sort -rh | head -15
+```
+
++ sudo: Chạy lệnh với quyền quản trị.
+
++ du: Kiểm tra dung lượng sử dụng của các thư mục và tệp.
+
++ -x: Chỉ quét trên cùng một filesystem, không đi sang filesystem khác.
+
+
++ -h: Hiển thị dung lượng theo đơn vị dễ đọc (KB, MB, GB).
+
++ /: Quét từ thư mục gốc.
+
+
++ --max-depth=5: Giới hạn độ sâu quét tối đa 5 cấp thư mục.
+
++ 2>/dev/null: Ẩn các thông báo lỗi.
+
+
++ |: Chuyển kết quả sang lệnh tiếp theo.
+
+
++ sort -rh: Sắp xếp dung lượng theo thứ tự giảm dần.
+
++ head -15: Hiển thị 15 kết quả đầu tiên.
+
+
+
+<p align="center">
+<img width="708" height="303" alt="Screenshot 2026-10-14 153248" src="https://github.com/user-attachments/assets/8d397b12-53ab-47d5-b2d4-6447dfde5ee2" />
+  <br>
+  <em>Hình 3: Kiểm tra thư mục nào chiếm nhiều nhất  </em>
+</em>
+</p>
+
+
+**Giải thích câu lệnh tắt Vulnerability Detection**
+
+```
+until sudo test -f /var/ossec/etc/ossec.conf; do sleep 1; done; sudo sed -i '/<vulnerability-detection>/,/<\/vulnerability-detection>/ s#<enabled>yes</enabled>#<enabled>no</enabled>#' /var/ossec/etc/ossec.conf && echo DONE
+```
+
+| Command | Meaning |
+|---|---|
+| ```until ...; do ...; done``` | Hiển thị nhanh các card mạng, địa chỉ IP và trạng thái kết nối |
+| ```sudo test -f /var/ossec/etc/ossec.conf``` | Kiểm tra tệp cấu hình Wazuh đã tồn tại hay chưa. |
+| ```sleep 1``` | Chờ 1 giây trước khi kiểm tra lại. |
+| ``` sudo sed -i``` | Chỉnh sửa trực tiếp nội dung tệp. |
+| ``` /<vulnerability-detection>/,/<\/vulnerability-detection>/``` | Giới hạn thao tác trong khối cấu hình vulnerability-detection. |
+| ```s#<enabled>yes</enabled>#<enabled>no</enabled>#``` | Thay đổi trạng thái từ yes thành no. |
+| ``` /var/ossec/etc/ossec.conf``` | Đường dẫn tệp cấu hình Wazuh. |
+| ``` && echo DONE``` | In DONE nếu lệnh chỉnh sửa hoàn tất thành công.. |
+
+
+
+
+```mermaid
+flowchart TD
+    A([Bắt đầu]) --> B{"Tệp ossec.conf đã tồn tại?"}
+    B -- Chưa --> C["sleep 1 giây"]
+    C --> B
+    B -- Rồi --> D["sed -i chỉnh sửa cấu hình"]
+    D --> E["Tìm khối vulnerability-detection"]
+    E --> F["Đổi enabled: yes thành no"]
+    F --> G{"Lệnh chỉnh sửa thành công?"}
+    G -- Có --> H["echo DONE"]
+    G -- Không --> I([Kết thúc với lỗi])
+    H --> J([Hoàn tất])
+```
+
+
+
+
 
 ## Phase 3: Windows endpoint
 
