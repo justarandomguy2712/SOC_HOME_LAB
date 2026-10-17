@@ -101,27 +101,14 @@ sudo du -xh / --max-depth=5 2>/dev/null | sort -rh | head -15
 ```
 
 + sudo: Chạy lệnh với quyền quản trị.
-
 + du: Kiểm tra dung lượng sử dụng của các thư mục và tệp.
-
 + -x: Chỉ quét trên cùng một filesystem, không đi sang filesystem khác.
-
-
 + -h: Hiển thị dung lượng theo đơn vị dễ đọc (KB, MB, GB).
-
 + /: Quét từ thư mục gốc.
-
-
 + --max-depth=5: Giới hạn độ sâu quét tối đa 5 cấp thư mục.
-
 + 2>/dev/null: Ẩn các thông báo lỗi.
-
-
 + |: Chuyển kết quả sang lệnh tiếp theo.
-
-
 + sort -rh: Sắp xếp dung lượng theo thứ tự giảm dần.
-
 + head -15: Hiển thị 15 kết quả đầu tiên.
 
 
@@ -233,25 +220,10 @@ Start-Process notepad.exe -Verb RunAs -ArgumentList '"C:\Program Files (x86)\oss
 ```
 
  + Start-Process: Khởi chạy một tiến trình mới trong PowerShell.
-
-
-
  + notepad.exe: Mở trình soạn thảo Notepad.
-
-
-
  + -Verb RunAs: Chạy chương trình với quyền quản trị viên (Administrator), hiển thị yêu cầu UAC nếu cần.
-
-
-
-+ -ArgumentList: Truyền đường dẫn tệp cần mở cho Notepad.
-
-
-
++ -ArgumentList: Truyền đường dẫn tệp cần mở cho Notepad
 + "C:\Program Files (x86)\ossec-agent\ossec.conf": Đường dẫn đến tệp cấu hình Wazuh Agent trên Windows.
-
-
-
 + Dấu nháy đơn và dấu nháy kép lồng nhau: Giúp truyền toàn bộ đường dẫn có chứa khoảng trắng thành một đối số duy nhất.
 
 
@@ -267,3 +239,8 @@ Start-Process notepad.exe -Verb RunAs -ArgumentList '"C:\Program Files (x86)\oss
 Khối lệnh phải nằm trong trong cặp <ossec_config>...</ossec_config>
 
 #### 3. PowerShell (Admin) -> Restart-Service WazuhSvc -> NO ERROR
+
+
+
+
+## Phase 4: Windows endpoint
