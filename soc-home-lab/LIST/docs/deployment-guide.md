@@ -258,6 +258,104 @@ Trên VM Windows, tạo hai lần đăng nhập sai, ```Win + L``` để khóa m
 | Cặp đối chiếu | 4624 = đăng nhập thành công, 4625 = thất bại |
 | Dùng cho | 	Kịch bản test brute-force, MITRE T1110) |
 
+#### 2.
+
+Sau khi tạo các sự kiện đăng nhập thất bại tương ứng với Windows Event ID 4625, thực hiện lệnh sau trên máy ảo Windows bằng PowerShell với quyền Administrator để kiểm tra xem các sự kiện đã được ghi nhận chưa:
+
+```Get-WinEvent -FilterHashtable @{LogName='Security';Id=4625} -MaxEvents 3 | Select TimeCreated,Id```
+
+
+<p align="center">
+<img width="1032" height="343" alt="Screenshot 2026-10-15 225744" src="https://github.com/user-attachments/assets/30849e27-b897-492b-a110-5f5b47acf551" />
+  <br>
+  <em>Hình 6: Kiểm tra sự kiện đăng nhập thất bại Windows Event ID 4625 trên máy ảo Windows bằng PowerShell  </em>
+</em>
+</p>
+
+
+| Thành phần | Ý nghĩa |
+|---|---|
+| Get-WinEvent | Truy vấn các sự kiện được lưu trong Windows Event Log. |
+| -FilterHashtable | Lọc sự kiện theo các điều kiện được khai báo trong Hashtable. |
+| @{LogName='Security';Id=4625} | Chỉ lấy sự kiện thuộc nhật ký Security có mã sự kiện 4625. |
+| -MaxEvents 3 | Giới hạn kết quả trả về tối đa 3 sự kiện. |
+| ```pipeline ``` | Chuyển kết quả từ lệnh bên trái sang lệnh bên phải để xử lý tiếp. |
+| Select TimeCreated,Id | Chỉ hiển thị thời điểm xảy ra sự kiện (TimeCreated) và mã sự kiện (Id). |
+
+
+
+#### 3. 
+
+Kiểm tra trên Wazuh Dashboard để xác nhận sự kiện đã được agent thu thập
+
+Lọc truy vấn này trong Discover, chọn last 1 hour
+
+```data.win.system.eventID: 4625```
+
+<p align="center">
+<img width="1473" height="258" alt="image" src="https://github.com/user-attachments/assets/6c29bb8b-8078-4a5a-8e4a-56367b037f90" />
+  <br>
+  <em>Hình 7: Kiểm tra sự kiện đăng nhập thất bại trên Wazuh Dashboard  </em>
+</em>
+</p>
+
+**Giải thích các mục mà Agent thu thập được**: 
+
+| Thành phần | Giá trị | Ý nghĩa | 
+|---|---|---|
+| agent.name, agent.ip | win10-endpoint, 10.10.10.20 | Tên định danh và địa chỉ IP của máy Windows được cài đặt Wazuh Agent, nơi phát sinh sự kiện bảo mật. |
+| eventID | 4625 | Mã sự kiện Windows Security Event ID 4625, ghi nhận đăng nhập thất bại |
+| targetUserName | labuser | Tên đăng nhập của máy kiểm thử |
+| subStatus | 0xc000006a | Đúng tên, sai mật khẩu |
+| logonType | 2 | Đăng nhập tại máy |
+| ipAddress | 127.0.0.1 | Đăng nhập sai tại chính máy localhost |
+
+
+
+**Bảng bổ sung thêm các mã subStatus và logonType để phục vụ các bài lab sau này:**
+
+
+| Mã SubStatus | Ý nghĩa |
+|---|---|
+| `0x0` | Không có thông tin lỗi chi tiết bổ sung trong trường này. |
+| `0xC0000064` | Tên tài khoản không tồn tại hoặc bị nhập sai. |
+| `0xC000006A` | Mật khẩu không chính xác. |
+| `0xC000006D` | Thông tin xác thực không hợp lệ; cần kiểm tra thêm để xác định nguyên nhân cụ thể. |
+| `0xC000006E` | Tên tài khoản hoặc thông tin xác thực không hợp lệ theo trạng thái được báo cáo. |
+| `0xC000006F` | Đăng nhập ngoài khung giờ được phép. |
+| `0xC0000070` | Đăng nhập từ máy trạm không được phép. |
+| `0xC0000071` | Mật khẩu đã hết hạn. |
+| `0xC0000072` | Tài khoản đã bị vô hiệu hóa. |
+| `0xC000015B` | Tài khoản không được cấp quyền thực hiện kiểu đăng nhập yêu cầu. |
+| `0xC0000193` | Tài khoản đã hết hạn. |
+| `0xC0000224` | Tài khoản cần đổi mật khẩu khi đăng nhập. |
+| `0xC0000234` | Tài khoản đã bị khóa. |
+| `0xC000005E` | Không có máy chủ đăng nhập khả dụng để xử lý yêu cầu. |
+
+
+-------
+
+
+| Giá trị LogonType | Tên kiểu đăng nhập | Ý nghĩa |
+|---|---|---|
+| `2` | `Interactive` | Đăng nhập trực tiếp tại máy tính, ví dụ tại màn hình Windows. |
+| `3` | `Network` | Đăng nhập thông qua mạng, ví dụ truy cập SMB hoặc tài nguyên chia sẻ. |
+| `4` | `Batch` | Đăng nhập phục vụ tác vụ chạy theo lịch hoặc xử lý hàng loạt. |
+| `5` | `Service` | Đăng nhập phục vụ việc khởi chạy dịch vụ Windows. |
+| `7` | `Unlock` | Mở khóa phiên làm việc trên máy tính. |
+| `8` | `NetworkCleartext` | Đăng nhập qua mạng với thông tin xác thực được cung cấp cho gói xác thực ở dạng chưa băm. |
+| `9` | `NewCredentials` | Tạo phiên đăng nhập sử dụng thông tin xác thực khác cho các kết nối đi ra. |
+| `10` | `RemoteInteractive` | Đăng nhập từ xa thông qua Remote Desktop Services (RDP). |
+| `11` | `CachedInteractive` | Đăng nhập tương tác bằng thông tin xác thực miền được lưu đệm cục bộ. |
+
+
+
+
+
+
+
+
+
 
 
 
