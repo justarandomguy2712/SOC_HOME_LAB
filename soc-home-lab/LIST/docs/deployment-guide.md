@@ -351,7 +351,7 @@ Lọc truy vấn này trong Discover, chọn last 1 hour: ```data.win.system.eve
 
 
 
-
+*Source*: https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4625
 
 
 
