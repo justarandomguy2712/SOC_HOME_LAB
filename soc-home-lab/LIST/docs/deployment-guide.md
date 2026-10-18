@@ -151,8 +151,8 @@ flowchart TD
     E --> F["Đổi enabled: yes thành no"]
     F --> G{"Lệnh chỉnh sửa thành công?"}
     G -- Có --> H["echo DONE"]
-    G -- Không --> I([Kết thúc với lỗi])
-    H --> J([Hoàn tất])
+    G -- Không --> I([ERROR])
+    H --> J([Completed])
 ```
 
 **Giải thích câu lệnh kiểm tra sau khi đã cấu hình**
