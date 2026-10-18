@@ -241,6 +241,30 @@ Khối lệnh phải nằm trong trong cặp <ossec_config>...</ossec_config>
 #### 3. PowerShell (Admin) -> Restart-Service WazuhSvc -> NO ERROR
 
 
+### Kiểm thử khả năng phát hiện và ghi nhận sự kiện đăng nhập thất bại (Windows Event ID 4625) sau khi đã cấu hình trên hệ thống Wazuh SIEM :
+
+
+
+#### 1. 
+
+Trên VM Windows, tạo hai lần đăng nhập sai, ```Win + L``` để khóa màn hình, nhập sai mật khẩu tài khoản labuser 2 lần
+
++ Giải thích event ID 4625:
+ 
+| Mục | Giải Thích |
+|---|---|
+| Nguồn | Windows Security log. |
+| Ý nghĩa | An account failed to log on. |
+| Cặp đối chiếu | 4624 = đăng nhập thành công, 4625 = thất bại |
+| Dùng cho | 	Kịch bản test brute-force, MITRE T1110) |
+
+
+
+
+
+
+
+
 
 
 ## Phase 4: Windows endpoint
