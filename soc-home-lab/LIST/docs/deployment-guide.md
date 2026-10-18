@@ -288,9 +288,9 @@ Sau khi tạo các sự kiện đăng nhập thất bại tương ứng với Wi
 
 Kiểm tra trên Wazuh Dashboard để xác nhận sự kiện đã được agent thu thập
 
-Lọc truy vấn này trong Discover, chọn last 1 hour
+Lọc truy vấn này trong Discover, chọn last 1 hour: ```data.win.system.eventID: 4625```
 
-```data.win.system.eventID: 4625```
+
 
 <p align="center">
 <img width="1473" height="258" alt="image" src="https://github.com/user-attachments/assets/6c29bb8b-8078-4a5a-8e4a-56367b037f90" />
