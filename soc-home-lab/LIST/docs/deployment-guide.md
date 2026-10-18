@@ -362,7 +362,3 @@ Lọc truy vấn này trong Discover, chọn last 1 hour
 
 
 
-
-
-
-## Phase 4: Windows endpoint
