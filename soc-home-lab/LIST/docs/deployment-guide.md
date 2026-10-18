@@ -199,7 +199,7 @@ sudo systemctl is-active wazuh-manager wazuh-indexer wazuh-dashboard filebeat; d
 | 4 | Wazuh Agent | Dashboard > Agents > Deploy new agent (Windows, MSI, server `10.10.10.10`, name `win10-endpoint`); dán khối lệnh vào PowerShell Admin; `NET START WazuhSvc` | Agent trạng thái Active |
 | 5 | Sysmon | `Invoke-WebRequest -Uri "https://download.sysinternals.com/files/Sysmon.zip" -OutFile "C:\Lab\Sysmon.zip"`; giải nén; tải `sysmonconfig-export.xml` của SwiftOnSecurity; `Sysmon64.exe -accepteula -i sysmonconfig.xml` | `Get-Service Sysmon64` Running |
 | 6 | Cho Wazuh đọc Sysmon | Thêm khối `<localfile>` (xem tại https://github.com/justarandomguy2712/SOC_HOME_LAB/blob/8605b3afd5b22d07e5027bea0820ba72eff53611/soc-home-lab/LIST/configs/wazuh/ossec-agent-localfile-sysmon.xml.example), `Restart-Service WazuhSvc` | Sự kiện Sysmon xuất hiện trong Discover |
-| 7 | Sự kiện thử | `whoami`, `hostname`, đăng nhập sai | Có ID 1, 11 và 4625 trong Discover |
+| 7 | Sự kiện thử | Đăng nhập sai | Có ID 4625 trong Discover |
 
 
 
