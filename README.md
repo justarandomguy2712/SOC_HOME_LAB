@@ -60,7 +60,7 @@ soc-home-lab/
 | Địa chỉ IP, VMnet và luồng mạng được phép / IP addresses, VMnets, and permitted network flows | `docs/network-topology.md` | Thêm vùng mạng mới khi sang Phase 5 / Add new network segments in Phase 5 |
 | File cấu hình mẫu / Sample configuration files | `configs/sysmon/`, `configs/wazuh/` | Mỗi cấu hình ghi rõ lý do sử dụng và cách xác minh / Document the purpose and verification method for each configuration |
 | Rule tùy chỉnh (Phase 4) / Custom rules (Phase 4) | `detection-rules/local_rules.xml` | |
-| Giải thích rule, so sánh với rule mặc định và sổ theo dõi false positive / Rule explanations, comparison with default rules, and false-positive tracking | `docs/detection-engineering.md` | Thêm một mục cho mỗi rule mới / Add one section for each new rule |
+| Giải thích rule, so sánh với rule mặc định và theo dõi false positive / Rule explanations, comparison with default rules, and false-positive tracking | `docs/detection-engineering.md` | Thêm một mục cho mỗi rule mới / Add one section for each new rule |
 | Kịch bản kiểm thử: hành vi, kết quả và trạng thái Pass/Fail / Test scenario: behavior, results, and Pass/Fail status | `scenarios/<scenario-name>/<ID>-<name>.md` | Sao chép từ `scenarios/_TEMPLATE.md` / Copy from `scenarios/_TEMPLATE.md` |
 | Truy vấn Discover / Discover queries | `queries/discover-queries.md` | Ghi rõ truy vấn nào đã được xác minh trên lab / Clearly identify queries verified in the lab |
 | Báo cáo điều tra sự cố / Incident investigation report | `reports/incident-reports/INC-<NNN>.md` | Sao chép từ `_TEMPLATE.md` / Copy from `_TEMPLATE.md` |
@@ -73,7 +73,7 @@ soc-home-lab/
 |---|---|
 | **Phase hạ tầng mới / New infrastructure phase** | 1. Thêm mục vào `docs/deployment-guide.md`. / Add a section to `docs/deployment-guide.md`.<br/>2. Cập nhật `docs/network-topology.md` nếu có VM hoặc mạng mới. / Update `docs/network-topology.md` if new VMs or networks are introduced.<br/>3. Cập nhật sơ đồ và bảng trạng thái. / Update the diagrams and status table. |
 | **Kịch bản hoặc rule mới / New scenario or rule** | 1. Tạo thư mục `scenarios/<name>/` và sử dụng `_TEMPLATE.md`. / Create `scenarios/<name>/` using `_TEMPLATE.md`.<br/>2. Thêm rule vào `detection-rules/local_rules.xml`. / Add the rule to `detection-rules/local_rules.xml`.<br/>3. Giải thích rule trong `docs/detection-engineering.md`. / Document the rule in `docs/detection-engineering.md`.<br/>4. Thêm truy vấn vào `queries/`. / Add the query to `queries/`.<br/>5. Cập nhật bảng kịch bản kiểm thử. / Update the test scenario table. |
-| **Điều tra sự cố / Incident investigation** | 1. Sao chép `reports/incident-reports/_TEMPLATE.md`. / Copy `reports/incident-reports/_TEMPLATE.md`.<br/>2. Điền timeline, bằng chứng và thông tin MITRE ATT&CK. / Document the timeline, evidence, and MITRE ATT&CK mapping.<br/>3. Phân loại rõ: Alert, Suspicious Activity hoặc Confirmed Incident. / Clearly classify the case as an Alert, Suspicious Activity, or Confirmed Incident. |
+| **Điều tra / Incident investigation** | 1. Sao chép `reports/incident-reports/_TEMPLATE.md`. / Copy `reports/incident-reports/_TEMPLATE.md`.<br/>2. Điền timeline, bằng chứng và thông tin MITRE ATT&CK. / Document the timeline, evidence, and MITRE ATT&CK mapping.<br/>3. Phân loại rõ: Alert, Suspicious Activity hoặc Confirmed Incident. / Clearly classify the case as an Alert, Suspicious Activity, or Confirmed Incident. |
 | **Kết thúc một cột mốc / Completing a milestone** | Cập nhật hoặc tạo báo cáo trong `reports/`. / Update or create a report in `reports/`. |
 
 **Lưu ý / Note:** Chỉ tạo thư mục khi đã có nội dung thực tế. Ví dụ: tạo `scenarios/port-scanning/` khi bắt đầu Phase 5, không tạo sẵn các thư mục chưa sử dụng.
@@ -89,8 +89,8 @@ soc-home-lab/
 # Tech Stack đã sử dụng / Technology Stack
 
 - Virtualization: VMware Workstation (VMnet10 host-only)
-- Operating Systems: Ubuntu Server 22.04.5, Windows 10 Pro
-- SIEM: Wazuh 4.14 (manager, indexer, dashboard)
+- Operating Systems: Ubuntu Server 22.04.5, Windows 10 Enterprise Evaluation
+- SIEM: Wazuh 4.14 All-in-one (Manager, Indexer, Dashboard)
 - Endpoint Monitoring: Wazuh Agent, Sysmon (config SwiftOnSecurity), Windows Security Event Log
 - Detection Engineering: Wazuh custom rules (XML), MITRE ATT&CK
 - Firewall & Routing: pfSense 
