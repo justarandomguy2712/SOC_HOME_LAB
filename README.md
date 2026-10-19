@@ -19,6 +19,10 @@ English Version: This is a personal SOC Home Lab project using Wazuh SIEM to sim
 ![Ubuntu Server](https://img.shields.io/badge/Ubuntu_Server-Linux-E95420?style=flat&logo=ubuntu&logoColor=white)
 ![VMware](https://img.shields.io/badge/VMware-Workstation-607078?style=flat&logo=vmware&logoColor=white)
 ![Bash](https://img.shields.io/badge/Bash-Scripting-4EAA25?style=flat&logo=gnubash&logoColor=white)
+![pfSense](https://img.shields.io/badge/pfSense-Firewall-212121?style=flat&logo=pfsense&logoColor=white)
+![Suricata](https://img.shields.io/badge/Suricata-IDS-EF3B2D?style=flat)
+![pfBlockerNG](https://img.shields.io/badge/pfBlockerNG-Package-2C3E50?style=flat)
+![Cron](https://img.shields.io/badge/Cron-Scheduler-555555?style=flat)
 
 </p>
 </div>
