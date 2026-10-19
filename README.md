@@ -75,3 +75,37 @@ soc-home-lab/
 **Lưu ý / Note:** Chỉ tạo thư mục khi đã có nội dung thực tế. Ví dụ: tạo `scenarios/port-scanning/` khi bắt đầu Phase 5, không tạo sẵn các thư mục chưa sử dụng.
 
 **Only create directories when they contain actual content.** For example, create `scenarios/port-scanning/` when starting Phase 5 rather than creating unused directories in advance.
+
+
+
+
+## 🧑‍💻 Tech Stack đã sử dụng / Technology Stack
+
+
+# Tech Stack đã sử dụng / Technology Stack
+
+- Virtualization: VMware Workstation (VMnet10 host-only)
+- Operating Systems: Ubuntu Server 22.04.5, Windows 10 Pro
+- SIEM: Wazuh 4.14 (manager, indexer, dashboard)
+- Endpoint Monitoring: Wazuh Agent, Sysmon (config SwiftOnSecurity), Windows Security Event Log
+- Detection Engineering: Wazuh custom rules (XML), MITRE ATT&CK
+- Firewall & Routing: pfSense 
+- Security (IDS): Suricata trên pfSense
+- Attack Simulation: Kali Linux (CLI), Atomic Red Team 
+- Traffic Analysis: Wireshark, tcpdump 
+
+
+
+## Tác giả / Author
+Mạnh Hà Nguyễn
+
+
+🎓 Sinh viên chuyên ngành An toàn thông tin - Học viện Kỹ thuật Mật mã (KMA).
+
+🎓 Information Security Student - Academy of Cryptography Techniques (KMA).
+
+
+
+
+
+
