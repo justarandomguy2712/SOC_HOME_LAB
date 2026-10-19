@@ -44,33 +44,34 @@ soc-home-lab/
 
 ## Cách dùng các thư mục template | How to Use Template Directories
 
-Nguyên tắc: **Cài đặt và cấu hình** nằm ở `docs/deployment-guide.md`; **phát hiện** (Rule, kịch bản, kết quả) nằm ở `detection-rules/`, `scenarios/` và `docs/detection-engineering.md`; **Tổng kết** nằm ở `reports/`.
 
-| Nội dung cần viết | Đặt ở đâu | Ghi chú |
+- **Cài đặt và cấu hình / Deployment and Configuration:** `docs/deployment-guide.md`
+- **Phát hiện / Detection Engineering:** `detection-rules/`, `scenarios/` và `docs/detection-engineering.md`
+- **Tổng kết và báo cáo / Reports and Summaries:** `reports/`
+
+| Nội dung  / Content | Vị trí file / File Location | Ghi chú / Notes |
 |---|---|---|
-| Cài đặt, cấu hình VM, Wazuh, agent, Sysmon (Phase 1, 2, 3, 5) | `docs/deployment-guide.md` | Mỗi phase một mục, theo `docs/phase-template.md` |
-| Sơ đồ kiến trúc | `diagrams/*.mmd` và `docs/architecture.md` | Sửa file `.mmd` rồi cập nhật README nếu kiến trúc đổi |
-| Địa chỉ IP, VMnet, luồng mạng được phép | `docs/network-topology.md` | Thêm vùng mạng mới khi sang Phase 5 |
-| File cấu hình mẫu (đã loại bí mật) | `configs/sysmon/`, `configs/wazuh/` | Mỗi cấu hình ghi lý do và cách xác minh |
-| Rule tùy chỉnh (Phase 4) | `detection-rules/local_rules.xml` | Giữ đúng bản đang chạy trên VM; ID từ `100100` trở lên |
-| Giải thích rule, so sánh với rule mặc định, sổ false positive | `docs/detection-engineering.md` | Mỗi rule mới thêm một mục |
-| Một kịch bản kiểm thử (hành vi test, kết quả, Pass hoặc Fail) | `scenarios/<tên-kịch-bản>/<ID>-<tên>.md` | Sao chép từ `scenarios/_TEMPLATE.md` |
-| Truy vấn Discover | `queries/discover-queries.md` | Ghi rõ truy vấn nào đã xác minh trên lab |
-| Ảnh của một phase | `docs/images/phase-N/` | Nhúng bằng đường dẫn tương đối |
-| Ảnh của một kịch bản | `scenarios/<tên-kịch-bản>/images/` | Nhúng bằng `![mô tả](images/ten-anh.png)` |
-| Điều tra một sự cố | `reports/incident-reports/INC-<NNN>.md` | Sao chép từ `_TEMPLATE.md` |
-| Báo cáo tổng kết | `reports/lab-report-*.md` | Mỗi mốc lớn một báo cáo; số liệu chưa đo ghi "chưa đo" |
-| Quy trình xử lý sự cố | `docs/incident-response.md` | Hoàn thiện ở Phase 6 |
+| Cài đặt và cấu hình VM, Wazuh, Agent, Sysmon (Phase 1, 2, 3, 5) / VM, Wazuh, Agent, and Sysmon installation and configuration | `docs/deployment-guide.md` | Mỗi phase một mục / One section per phase |
+| Sơ đồ kiến trúc / Architecture diagrams | `diagrams/*.mmd` và `docs/architecture.md` | Sửa file `.mmd` rồi cập nhật README nếu kiến trúc thay đổi / Edit the `.mmd` file and update the README if the architecture changes |
+| Địa chỉ IP, VMnet và luồng mạng được phép / IP addresses, VMnets, and permitted network flows | `docs/network-topology.md` | Thêm vùng mạng mới khi sang Phase 5 / Add new network segments in Phase 5 |
+| File cấu hình mẫu / Sample configuration files | `configs/sysmon/`, `configs/wazuh/` | Mỗi cấu hình ghi rõ lý do sử dụng và cách xác minh / Document the purpose and verification method for each configuration |
+| Rule tùy chỉnh (Phase 4) / Custom rules (Phase 4) | `detection-rules/local_rules.xml` | |
+| Giải thích rule, so sánh với rule mặc định và sổ theo dõi false positive / Rule explanations, comparison with default rules, and false-positive tracking | `docs/detection-engineering.md` | Thêm một mục cho mỗi rule mới / Add one section for each new rule |
+| Kịch bản kiểm thử: hành vi, kết quả và trạng thái Pass/Fail / Test scenario: behavior, results, and Pass/Fail status | `scenarios/<scenario-name>/<ID>-<name>.md` | Sao chép từ `scenarios/_TEMPLATE.md` / Copy from `scenarios/_TEMPLATE.md` |
+| Truy vấn Discover / Discover queries | `queries/discover-queries.md` | Ghi rõ truy vấn nào đã được xác minh trên lab / Clearly identify queries verified in the lab |
+| Báo cáo điều tra sự cố / Incident investigation report | `reports/incident-reports/INC-<NNN>.md` | Sao chép từ `_TEMPLATE.md` / Copy from `_TEMPLATE.md` |
+| Báo cáo tổng kết lab / Lab summary report | `reports/lab-report-*.md` | Tạo báo cáo cho mỗi cột mốc lớn; số liệu chưa đo ghi “chưa đo” / Create a report for each major milestone; mark unmeasured metrics as “not measured” |
+| Quy trình ứng phó sự cố / Incident response procedure | `docs/incident-response.md` | Hoàn thiện ở Phase 6 / Complete in Phase 6 |
 
-## Quy trình thêm nội dung mới
+## Quy trình thêm nội dung mới / Workflow for Adding New Content
 
-| Khi làm | Các bước |
+| Cấu hình / Config | Các bước / Steps |
 |---|---|
-| Phase hạ tầng mới | 1. Thêm mục vào `docs/deployment-guide.md`. 2. Cập nhật `docs/network-topology.md` nếu có VM hoặc mạng mới. 3. Cập nhật sơ đồ và bảng Trạng thái. 4. Đặt ảnh vào `docs/images/phase-N/` |
-| Kịch bản hoặc rule mới | 1. Tạo thư mục `scenarios/<tên>/` từ `_TEMPLATE.md`. 2. Thêm rule vào `detection-rules/local_rules.xml`. 3. Ghi giải thích vào `docs/detection-engineering.md`. 4. Thêm truy vấn vào `queries/`. 5. Cập nhật bảng Kịch bản kiểm thử |
-| Sự cố điều tra | 1. Sao chép `reports/incident-reports/_TEMPLATE.md`. 2. Điền timeline, bằng chứng, MITRE. 3. Ghi rõ Alert, Suspicious activity hay Confirmed incident |
-| Kết thúc một mốc | Cập nhật hoặc tạo báo cáo trong `reports/` |
+| **Phase hạ tầng mới / New infrastructure phase** | 1. Thêm mục vào `docs/deployment-guide.md`. / Add a section to `docs/deployment-guide.md`.<br/>2. Cập nhật `docs/network-topology.md` nếu có VM hoặc mạng mới. / Update `docs/network-topology.md` if new VMs or networks are introduced.<br/>3. Cập nhật sơ đồ và bảng trạng thái. / Update the diagrams and status table. |
+| **Kịch bản hoặc rule mới / New scenario or rule** | 1. Tạo thư mục `scenarios/<name>/` và sử dụng `_TEMPLATE.md`. / Create `scenarios/<name>/` using `_TEMPLATE.md`.<br/>2. Thêm rule vào `detection-rules/local_rules.xml`. / Add the rule to `detection-rules/local_rules.xml`.<br/>3. Giải thích rule trong `docs/detection-engineering.md`. / Document the rule in `docs/detection-engineering.md`.<br/>4. Thêm truy vấn vào `queries/`. / Add the query to `queries/`.<br/>5. Cập nhật bảng kịch bản kiểm thử. / Update the test scenario table. |
+| **Điều tra sự cố / Incident investigation** | 1. Sao chép `reports/incident-reports/_TEMPLATE.md`. / Copy `reports/incident-reports/_TEMPLATE.md`.<br/>2. Điền timeline, bằng chứng và thông tin MITRE ATT&CK. / Document the timeline, evidence, and MITRE ATT&CK mapping.<br/>3. Phân loại rõ: Alert, Suspicious Activity hoặc Confirmed Incident. / Clearly classify the case as an Alert, Suspicious Activity, or Confirmed Incident. |
+| **Kết thúc một cột mốc / Completing a milestone** | Cập nhật hoặc tạo báo cáo trong `reports/`. / Update or create a report in `reports/`. |
 
-Chỉ tạo thư mục khi đã có nội dung. Ví dụ `scenarios/port-scanning/` tạo ở Phase 5.
+**Lưu ý / Note:** Chỉ tạo thư mục khi đã có nội dung thực tế. Ví dụ: tạo `scenarios/port-scanning/` khi bắt đầu Phase 5, không tạo sẵn các thư mục chưa sử dụng.
 
-
+**Only create directories when they contain actual content.** For example, create `scenarios/port-scanning/` when starting Phase 5 rather than creating unused directories in advance.
