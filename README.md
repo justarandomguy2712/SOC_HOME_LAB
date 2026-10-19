@@ -33,14 +33,14 @@ English Version: This is a personal SOC Home Lab project using Wazuh SIEM to sim
 
 ```
 soc-home-lab/
-├── configs/            # Wazuh, agent and endpoint configuration files
-├── detection-rules/    # Custom Wazuh decoders and detection rules
-├── diagrams/           # Network and architecture diagrams
-├── docs/               # Setup guides and lab documentation
-├── evidence/           # Screenshots and logs proving each test result
-├── queries/            # Search and hunting queries
-├── reports/            # Incident and lab reports
-├── scenarios/          # Attack simulation scenarios
+├── configs/            
+├── detection-rules/   
+├── diagrams/           
+├── docs/               
+├── evidence/           
+├── queries/            
+├── reports/           
+├── scenarios/          
 ├── LICENSE
 └── README.md
 
