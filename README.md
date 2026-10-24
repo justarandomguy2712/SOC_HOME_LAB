@@ -85,9 +85,6 @@ soc-home-lab/
 
 ## 🧑‍💻 Tech Stack đã sử dụng / Technology Stack
 
-
-# Tech Stack đã sử dụng / Technology Stack
-
 - Virtualization: VMware Workstation (VMnet10 host-only)
 - Operating Systems: Ubuntu Server 22.04.5, Windows 10 Enterprise Evaluation
 - SIEM: Wazuh 4.14 All-in-one (Manager, Indexer, Dashboard)
