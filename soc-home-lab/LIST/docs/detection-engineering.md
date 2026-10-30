@@ -59,7 +59,7 @@ Quá trình này giúp làm rõ cơ chế phát hiện đăng nhập thất bạ
 | ```  head -5 ``` | Chỉ hiển thị 5 kết quả đầu tiên.|
 | ```  -n ``` | Hiển thị số dòng.|
 
-Và **Output** của 2 câu lệnh này cho ta kết quả như sau
+Và **Output** của 2 câu lệnh này cho ta kết quả như sau:
 
 ```
 /var/ossec/ruleset/rules/0580-win-security_rules.xml:66:    <description>Windows Logon Failure</description>
