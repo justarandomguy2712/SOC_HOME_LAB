@@ -27,6 +27,13 @@ Quá trình này giúp làm rõ cơ chế phát hiện đăng nhập thất bạ
 ```sudo grep '"eventID":"4625"' /var/ossec/logs/alerts/alerts.json | tail -3 | grep -o '"rule":{"level":[0-9]*,"description":"[^"]*","id":"[0-9]*"'```
 
 
+
+
+ **Mục đích: Truy xuất 3 cảnh báo gần nhất liên quan đến Event ID 4625 trong Wazuh, sau đó trích xuất thông tin Rule ID, Level và Description tương ứng.**
+
+
+
+
 | Command | Meaning |
 |---|---|
 | ```sudo grep '"eventID":"4625"'``` | Thực thi với quyền root để lọc ra EventID 4625. |
@@ -40,17 +47,19 @@ Quá trình này giúp làm rõ cơ chế phát hiện đăng nhập thất bạ
 
 ```sudo grep -rn -i "logon failure" /var/ossec/ruleset/rules/ | head -5```
 
+**Mục đích: Lấy 5 kết quả đầu tiên liên quan đến cụm từ "Logon Failure" trong toàn bộ thư mục Ruleset mặc định của Wazuh, nhằm xác định file cấu hình và vị trí khai báo các Rule phục vụ phát hiện hành vi đăng nhập thất bại.**
+
+
 
 | Command | Meaning |
 |---|---|
 | ```-r``` | Tìm kiếm đệ quy trong toàn bộ thư mục và thư mục con.. |
-| ```-n``` | Hiển thị số dòng chứa nội dung khớp. |
 | ```-i``` | Không phân biệt chữ hoa và chữ thường. |
-| ``` "logon failure"``` | 	Chuỗi từ khóa cần tìm kiếm. |
+| ``` logon failure``` | 	Chuỗi từ khóa cần tìm kiếm. |
 | ```  head -5 ``` | Chỉ hiển thị 5 kết quả đầu tiên.|
+| ```  -n ``` | Hiển thị số dòng.|
 
-
-Và output của 2 câu lệnh này cho ta kết quả như sau
+Và **Output** của 2 câu lệnh này cho ta kết quả như sau
 
 ```
 /var/ossec/ruleset/rules/0580-win-security_rules.xml:66:    <description>Windows Logon Failure</description>
@@ -83,9 +92,16 @@ Thông qua 2 câu lệnh này ta đã xác định được file chứa ruleset 
 
 ```sudo sed -n '58,75p;262,278p' /var/ossec/ruleset/rules/0580-win-security_rules.xml``` 
 
+**Mục đích: Trích xuất nội dung tại hai khoảng dòng cụ thể trong file Ruleset để khảo sát cấu trúc các Rule mặc định.**
 
 
-
+| Command | Meaning |
+|---|---|
+| ```sed``` | Tìm kiếm đệ quy trong toàn bộ thư mục và thư mục con. |
+| ```-n``` | Không tự động in toàn bộ nội dung file. |
+| ```58,75p``` | 	In các dòng từ 58 đến 75. |
+| ``` 262,278p``` | 	In các dòng từ 262 đến 278. |
+| ```  0580-win-security_rules.xml ``` | File chứa các Rule mặc định liên quan đến Windows Security.|
 
 
 
@@ -95,11 +111,17 @@ Thông qua 2 câu lệnh này ta đã xác định được file chứa ruleset 
 
 ```sudo grep -n "frequency\|if_matched_sid" /var/ossec/ruleset/rules/0580-win-security_rules.xml | head```
 
+**Mục đích: Tìm kiếm các thành phần frequency và if_matched_sid trong file Ruleset nhằm kiểm tra sự tồn tại của các cơ chế phát hiện dựa trên events.**
 
 
-
-
-
+| Command | Meaning |
+|---|---|
+| ```grep``` | Tìm kiếm chuỗi ký tự trong file. |
+| ```-n``` | Hiển thị số dòng trong file. |
+| ```frequency``` | 	Tần suất cần đạt ngưỡng đã cấu hình để kích hoạt các event alert. |
+| ``` \|``` | 	Toán tử OR trong biểu thức tìm kiếm của grep. |
+| ```  if_matched_sid ``` |Tham chiếu đến SID của một Rule đã được kích hoạt trước đó.|
+| ```  head ``` |Hiển thị 10 dòng đầu tiên (Mặc định)|
 
 
 
