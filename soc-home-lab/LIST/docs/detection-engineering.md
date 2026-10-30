@@ -1,4 +1,4 @@
-# Detection engineering
+# Detection engineering (Phase 4)
 
 ## Cấu trúc một rule Wazuh (đọc từ file rule mặc định `0580-win-security_rules.xml`)
 
