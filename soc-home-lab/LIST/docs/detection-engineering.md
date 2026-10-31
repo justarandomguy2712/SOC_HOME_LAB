@@ -247,7 +247,7 @@ Cần kiểm tra toàn bộ nội dung Rule 60204 vì việc này giúp xác đ�
 ---
 
 
-Để phân tích và tìm giá trị của $MS_FREQ và Rule 60204 thì ta dùng 3 câu lệnh sau:
+Để phân tích và tìm giá trị của $MS_FREQ và Rule 60204 thì ta dùng 2 câu lệnh sau:
 
 | STT | Lệnh thực hiện | Ý nghĩa |
 |---|---|---|
