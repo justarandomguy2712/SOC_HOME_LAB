@@ -244,37 +244,71 @@ Trong các Rule 60203–60207, Wazuh sử dụng biến $MS_FREQ làm giá trị
 Cần kiểm tra toàn bộ nội dung Rule 60204, đặc biệt là các điều kiện <if_matched_sid>, <field>, <same_field> và phần <description>. Việc này giúp xác định Rule đang theo dõi loại sự kiện nào, có liên quan đến đăng nhập thất bại hay không và liệu Custom Rule 100100 có nguy cơ trùng lặp chức năng.
 
 
+---
+
+
+Để phân tích và tìm giá trị của $MS_FREQ và Rule 60204 thì ta dùng 3 câu lệnh sau:
+
+| STT | Lệnh thực hiện | Ý nghĩa |
+|---|---|---|
+| 1 | `sudo grep -rn "MS_FREQ" /var/ossec/ruleset/rules/ \| head -3` | Tìm kiếm các vị trí sử dụng hoặc khai báo biến `MS_FREQ` trong Ruleset mặc định, qua đó xác định ngưỡng tần suất được áp dụng. |
+| 2 | `sudo sed -n '1126,1160p' /var/ossec/ruleset/rules/0580-win-security_rules.xml` | Trích xuất nội dung các Rule từ dòng 1126 đến 1160 để khảo sát điều kiện và cơ chế phát hiện của các Rule `60203`–`60205`. |
+
+
+ Phân tích **Output** của 2 câu lệnh trên cho kết quả như sau:
+
+1. Giá trị biến $MS_FREQ
+Kết quả tìm kiếm:
+
+```bash
+<var name="MS_FREQ">8</var>
+```
+Như vậy, biến $MS_FREQ có giá trị là 8. Các Rule sử dụng biến này sẽ áp dụng ngưỡng tần suất tương ứng là 8 lần.
+
+
+2. Phân tích Rule 60204
+
+
+```bash
+<rule id="60204" level="10" frequency="$MS_FREQ" timeframe="240">
+    <if_matched_group>authentication_failed</if_matched_group>
+    <same_field>win.eventdata.ipAddress</same_field>
+    <description>Multiple Windows Logon Failures</description>
+</rule>
+...
+ <mitre>
+      <id>T1110</id>
+    </mitre>
+  </rule>
+```
+
+Rule 60204 – Multiple Windows Logon Failures
+- Level: 10.
+- Frequency: 8 lần.
+- Timeframe: 240 giây.
+- Điều kiện: if_matched_group = authentication_failed.
+- Trường nhóm sự kiện: win.eventdata.ipAddress.
+- MITRE ATT&CK: T1110 – Brute Force.
+
+
+**Nhận xét:** Ruleset mặc định của Wazuh đã hỗ trợ phát hiện nhiều lần đăng nhập thất bại theo địa chỉ Source IP thông qua Rule `60204`. Vì vậy, Custom Rule mới cần có tiêu chí phát hiện khác biệt để tránh trùng lặp chức năng.
+
+---
+
+Qua quá trình khảo sát, nhận thấy Rule `60204` đã hỗ trợ phát hiện nhiều lần đăng nhập Windows thất bại dựa trên địa chỉ IP nguồn (ở đấy có máy localhost 127.0.0.1). Vì vậy, Custom Rule S01 được định hướng theo một phương thức khác: **theo dõi số lần đăng nhập thất bại dựa trên tài khoản đích (`targetUserName`)**.
+
+Sự khác biệt giữa hai cơ chế phát hiện được thể hiện như sau:
+
+- **Rule mặc định `60204`:** Nhóm các sự kiện đăng nhập thất bại theo cùng địa chỉ IP nguồn (`win.eventdata.ipAddress`).
+- **Custom Rule S01 (`100100`):** Hướng đến nhóm các sự kiện đăng nhập thất bại theo cùng tài khoản đích (`win.eventdata.targetUserName`).
+- **Ngưỡng S01**: Cấu hình 5 lần / 60s so với 8 lần / 240s của Rule mặc định
+
 
 ---
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Và để viết Rule Custom cho S01 thì tham khảo tại repo sau:
+https://github.com/justarandomguy2712/SOC_HOME_LAB/blob/e859daf578dcb80b99d25736597aab715c839728/soc-home-lab/LIST/detection-rules/local_rules.xml
 
 
 
