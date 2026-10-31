@@ -482,7 +482,10 @@ Users nhập sai mật khẩu nhiều lần hoặc dịch vụ, tác vụ tự �
 - Điều chỉnh frequency và timeframe phù hợp với môi trường.
 - Chỉ tạo ngoại lệ cho các nguồn đã xác minh là hợp lệ.
 
-Kết luận: Cần kết hợp phân tích ngữ cảnh và tinh chỉnh Rule để giảm False Positive mà vẫn đảm bảo khả năng phát hiện Brute-force.
+
+
+
+
 -----
 
 ## S02: Đăng nhập thất bại liên tiếp
