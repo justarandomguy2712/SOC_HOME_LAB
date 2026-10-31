@@ -12,8 +12,8 @@
 
 ### Hành vi kiểm thử
 
-1.1. Khảo sát và đánh giá các Rule mặc định đối với hành vi đăng nhập thất bại
-
+#### 1.1. Khảo sát và đánh giá các Rule mặc định đối với hành vi đăng nhập thất bại
+ 
 
 Đầu tiên, tiến hành truy xuất các cảnh báo được ghi nhận trong file ```alerts.json``` nhằm xác định Rule ID, mức độ cảnh báo (Level) và mô tả tương ứng với sự kiện Event ID 4625. Sau đó, thực hiện tìm kiếm trong thư mục Ruleset mặc định của Wazuh để xác định file cấu hình và nội dung Rule liên quan.
 
@@ -235,13 +235,13 @@ Khảo sát các thành phần cần thiết trước khi xây dựng Custom Rul
 
 Từ những thông tin còn thiếu, quá trình khảo sát sẽ tập trung vào hai nội dung chính:
 
-1. Xác định giá trị $MS_FREQ
+##### 1. Xác định giá trị $MS_FREQ
 
 Trong các Rule 60203–60207, Wazuh sử dụng biến $MS_FREQ làm giá trị cho thuộc tính frequency. Do đó, cần truy tìm nơi khai báo biến này để xác định chính xác ngưỡng số lần xuất hiện sự kiện và khoảng thời gian tương ứng.
 
-2. Phân tích Rule 60204
+##### 2. Phân tích Rule 60204
 
-Cần kiểm tra toàn bộ nội dung Rule 60204, đặc biệt là các điều kiện <if_matched_sid>, <field>, <same_field> và phần <description>. Việc này giúp xác định Rule đang theo dõi loại sự kiện nào, có liên quan đến đăng nhập thất bại hay không và liệu Custom Rule 100100 có nguy cơ trùng lặp chức năng.
+Cần kiểm tra toàn bộ nội dung Rule 60204 vì việc này giúp xác định Rule đang theo dõi loại sự kiện nào, có liên quan đến đăng nhập thất bại hay không và liệu Custom Rule 100100 có nguy cơ trùng lặp chức năng.
 
 
 ---
@@ -255,9 +255,9 @@ Cần kiểm tra toàn bộ nội dung Rule 60204, đặc biệt là các điề
 | 2 | `sudo sed -n '1126,1160p' /var/ossec/ruleset/rules/0580-win-security_rules.xml` | Trích xuất nội dung các Rule từ dòng 1126 đến 1160 để khảo sát điều kiện và cơ chế phát hiện của các Rule `60203`–`60205`. |
 
 
- Phân tích **Output** của 2 câu lệnh trên cho kết quả như sau:
+Phân tích **Output** của 2 câu lệnh trên cho kết quả như sau:
 
-1. Giá trị biến $MS_FREQ
+##### 1. Giá trị biến $MS_FREQ
 Kết quả tìm kiếm:
 
 ```bash
@@ -266,7 +266,7 @@ Kết quả tìm kiếm:
 Như vậy, biến $MS_FREQ có giá trị là 8. Các Rule sử dụng biến này sẽ áp dụng ngưỡng tần suất tương ứng là 8 lần.
 
 
-2. Phân tích Rule 60204
+##### 2. Phân tích Rule 60204
 
 
 ```bash
@@ -307,14 +307,14 @@ Sự khác biệt giữa hai cơ chế phát hiện được thể hiện như s
 ---
 
 Triển khai Custom Rule S01:
-1. Sao lưu cấu hình hiện tại
+##### 1. Sao lưu cấu hình hiện tại
 
 ```bash
 sudo cp /var/ossec/etc/rules/local_rules.xml ~/local_rules.xml.bak
 ```
 Copy lưu local_rules.xml.bak trong thư mục Home của người dùng trước khi chỉnh sửa, nhằm bảo đảm có thể khôi phục cấu hình ban đầu khi cần thiết.
 
-2. Bổ sung Custom Rule S01
+##### 2. Bổ sung Custom Rule S01
 
 ```bash
 sudo tee -a /var/ossec/etc/rules/local_rules.xml > /dev/null <<'EOF'
@@ -333,9 +333,9 @@ Cấu trúc `<<'EOF'` sử dụng cơ chế **Here-document**, cho phép truyề
 - `EOF`: Đánh dấu kết thúc khối dữ liệu đầu vào.
 
 Custom Rule S01 được viết tại file này:
-[../../detection-rules/local_rules.xml](../../detection-rules/local_rules.xml)
+https://github.com/justarandomguy2712/SOC_HOME_LAB/blob/1c770e040146cedf7cf81d6d941e7a275aa6e281/soc-home-lab/LIST/detection-rules/local_rules.xml
 
-3. Kiểm tra tính hợp lệ của cấu hình
+##### 3. Kiểm tra tính hợp lệ của cấu hình
 
 ```bash
 sudo /var/ossec/bin/wazuh-analysisd -t
@@ -343,14 +343,14 @@ sudo /var/ossec/bin/wazuh-analysisd -t
 Sử dụng công cụ wazuh-analysisd với tùy chọn -t để kiểm tra cấu hình Ruleset, phát hiện lỗi cú pháp hoặc cấu hình không hợp lệ trước khi đưa Rule vào hoạt động.
 
 
-4. Sau đó khởi động lại Wazuh Manager để áp dụng cấu hình:
+##### 4. Sau đó khởi động lại Wazuh Manager để áp dụng cấu hình:
 
 ```bash
 sudo systemctl restart wazuh-manager
 sudo systemctl status wazuh-manager
 ```
 
-1.2. Kiểm thử hoạt động Custom Rule S01
+#### 1.2. Kiểm thử hoạt động Custom Rule S01
 
 Sau khi hoàn tất cấu hình và khởi động lại Wazuh Manager, tiến hành kiểm thử Custom Rule S01 nhằm xác minh khả năng phát hiện các sự kiện đăng nhập Windows thất bại liên tiếp trên cùng một tài khoản.
 
@@ -359,10 +359,9 @@ Trên máy Windows 10 Pro thì thử câu lệnh cmd đặng nhập sai user nh�
 ```cmd
 net use \\127.0.0.1\IPC$ /user:fakeuser SaiMatKhau1
 ```
-
 Dùng `fakeuser` để tránh khóa tài khoản thật. Mỗi lần trả `System error 1326`.
 
-### Truy vấn Discover
+### Truy vấn Discover trên Wazuh Dashboard
 
 ```
 rule.id: 60122
@@ -372,23 +371,144 @@ data.win.system.eventID: 4625
 
 ### Kết quả
 
-| Phép đo | Giá trị |
-|---|---|
-| Test A: 4 lần sai | `60122` bắn 4 lần, `100100` không bắn (ảnh console) |
-| Test B: sai liên tiếp | `100100` (level 10) xuất hiện trên console sau các dòng `60122` (ảnh console) |
-| Bắn ở lần sai thứ mấy | **Chưa ghi nhận.** Cần đếm lại hoặc đếm từ Discover (`rule.id: 60122`) |
-| Thời gian từ lần sai cuối đến alert | **Chưa đo** |
-| Alert trên dashboard (Discover) | **Chưa xác nhận trong báo cáo này** |
-| Pass hoặc Fail | **Chưa kết luận.** Điều kiện Pass: 4 lần không bắn (đạt), bắn ở lần 5 hoặc 6 (chưa biết lần nào) |
+#### Test A – Kiểm thử với 4 lần đăng nhập thất bại
 
-### Bằng chứng cần bổ sung
+**Mục tiêu:** Kiểm tra khả năng hoạt động của Rule khi số lượng sự kiện đăng nhập thất bại chưa đạt ngưỡng phát hiện.
 
-- Ảnh Discover `rule.id: 100100`, hiện `rule.level`, `rule.mitre.id`, `targetUserName`
-- Ảnh Discover `rule.id: 60122` với giờ của từng lần sai trong Test B
-- Ảnh console Test A và Test B (đã có)
+**Các bước thực hiện:**
 
-## False positive có thể gặp
++ Sử dụng Windows Endpoint thực hiện 4 lần đăng nhập với thông tin mật khẩu không chính xác.
 
-Người dùng thật quên mật khẩu và gõ sai nhiều lần liên tiếp. Tác vụ tự động dùng mật khẩu cũ (dịch vụ, ổ mạng ánh xạ).
++ Đảm bảo các lần đăng nhập sử dụng cùng một tài khoản đích.
 
-## Phân tích và khuyến nghị
++ Thực hiện các lần đăng nhập trong khoảng thời gian 60 giây
+
+
+
+
+<p align="center">
+<img width="1583" height="518" alt="Screenshot 2026-10-16 154405" src="https://github.com/user-attachments/assets/f05df56e-8c29-4f7c-8d69-79a3c5379e9a" />
+  <br>
+  <em>Hình 1: Đăng nhập sai 4 lần trên máy Windows 10 Endpoint  </em>
+</em>
+</p>
+
+#### Test B – Kiểm thử với 5 lần đăng nhập thất bại
+
+**Mục tiêu**: Xác minh khả năng kích hoạt Custom Rule S01 khi số lượng sự kiện đăng nhập thất bại đạt ngưỡng cấu hình.
+
+**Các bước thực hiện:**
+
++ Tiếp tục sử dụng Windows Endpoint thực hiện 5 lần đăng nhập với mật khẩu không chính xác.
++ Đảm bảo các lần đăng nhập sử dụng cùng một tài khoản đích.
++ Thực hiện 5 lần đăng nhập trong khoảng thời gian 60 giây.
+
+
+
+<p align="center">
+<img width="974" height="250" alt="Screenshot 2026-10-16 155329" src="https://github.com/user-attachments/assets/ddda3696-5a5d-41cb-96b8-b20bd18ba32b" />
+  <br>
+  <em>Hình 2: Kết quả kiểm tra điều kiện kích hoạt Custom Rule S01 khi đạt ngưỡng phát hiện. </em>
+</em>
+</p>
+
+
+
+#### Kiểm tra log trong Wazuh Discover
+
+
+
+<p align="center">
+  <img width="905" height="844" alt="Screenshot 2026-10-16 155444" src="https://github.com/user-attachments/assets/1e164483-fc7e-4d30-8856-0b63624630d6" />
+  <br><br>
+ <img width="840" height="366" alt="Screenshot 2026-10-16 155510" src="https://github.com/user-attachments/assets/bf267bb3-2a1a-4b5e-b5a0-22562d8407ae" />
+  <br>
+  <em>Hình 3 và 4: Chi tiết các trường dữ liệu của cảnh báo Custom Rule S01 trên Wazuh Discover.</em>
+</p>
+
+**Phân tích log**:
+
+Sau khi Custom Rule S01 được kích hoạt, Wazuh Discover ghi nhận các trường dữ liệu quan trọng sau:
+
+##### 1. Thông tin Custom Rule
+
+| Trường dữ liệu | Giá trị ghi nhận | Ý nghĩa |
+|---|---|---|
+| `rule.id` | `100100` | ID định danh của Custom Rule S01. |
+| `rule.description` | `SOC_LAB S01: NGHIEM CAM HANH VI BRUTE-FORCE` | Mô tả cảnh báo khi phát hiện hành vi Brute-force. |
+| `rule.level` | `10` | Mức độ cảnh báo của Rule. |
+| `rule.frequency` | `5` | Ngưỡng số lần sự kiện được tạo để cấu hình phát hiện. |
+| `rule.firedtimes` | `1` | Số lần Rule được kích hoạt trong thông tin cảnh báo. |
+| `rule.groups` | `local, soc_lab, windows` | Các nhóm phân loại của Custom Rule. |
+| `rule.mitre.id` | `T1110` | Mã kỹ thuật MITRE ATT&CK Brute Force. |
+| `rule.mitre.technique` | `Brute Force` | Kỹ thuật tấn công dò mật khẩu. |
+
+##### 2. Thông tin sự kiện xác thực Windows
+
+| Trường dữ liệu | Giá trị ghi nhận | Ý nghĩa |
+|---|---|---|
+| `data.win.eventdata.targetUserName` | `fakeuser` | Tài khoản mục tiêu được sử dụng trong lần đăng nhập thất bại. |
+| `data.win.eventdata.logonType` | `3` | Kiểu đăng nhập qua mạng (Network Logon). |
+| `data.win.eventdata.authenticationPackageName` | `NTLM` | Gói xác thực được Windows sử dụng. |
+| `data.win.eventdata.status` | `0xc000006d` | Mã trạng thái cho biết yêu cầu đăng nhập không hợp lệ. |
+| `data.win.eventdata.subStatus` | `0xc0000064` | Mã trạng thái phụ, tương ứng với trường hợp tên tài khoản không tồn tại. |
+
+##### 3. Thông tin máy Endpoint
+
+| Trường dữ liệu | Giá trị ghi nhận | Ý nghĩa |
+|---|---|---|
+| `agent.name` | `win10-endpoint` | Tên máy Endpoint được giám sát. |
+| `agent.ip` | `10.10.10.20` | Địa chỉ IP của máy Endpoint gửi sự kiện về Wazuh Manager. |
+
+**Nhận xét:** Kết quả trên cho thấy Custom Rule S01 đã được kích hoạt với Rule ID `100100`, mức cảnh báo Level `10` và được ánh xạ tới kỹ thuật `T1110 – Brute Force` của MITRE ATT&CK. Dữ liệu sự kiện cho thấy tài khoản `fakeuser` có lần đăng nhập thất bại với `Status = 0xc000006d` và `SubStatus = 0xc0000064`, tương ứng với trường hợp tên tài khoản không tồn tại. Qua đó, Wazuh vừa ghi nhận thông tin xác thực thất bại từ Windows Endpoint, vừa phân loại sự kiện theo logic phát hiện Brute-force đã xây dựng.
+
+Tham khảo các mã Status, SubStatus, Logon Type tại:
+
++ Windows Logon Types: https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/basic-audit-logon-events
+
++ Windows Event ID 4625: https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4625
+
+
+
+
+
+### False positive có thể gặp
+
+Users nhập sai mật khẩu nhiều lần hoặc dịch vụ, tác vụ tự động vẫn sử dụng thông tin xác thực cũ. Những trường hợp này có thể kích hoạt Rule S01 dù không có hành vi tấn công thực sự.
+
+### Phân tích và khuyến nghị
+- Kiểm tra tài khoản, IP nguồn và thời điểm phát sinh sự kiện.
+- Xác minh các dịch vụ, tác vụ tự động và thông tin xác thực đã lưu.
+- Điều chỉnh frequency và timeframe phù hợp với môi trường.
+- Chỉ tạo ngoại lệ cho các nguồn đã xác minh là hợp lệ.
+
+Kết luận: Cần kết hợp phân tích ngữ cảnh và tinh chỉnh Rule để giảm False Positive mà vẫn đảm bảo khả năng phát hiện Brute-force.
+-----
+
+## S02: Đăng nhập thất bại liên tiếp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
