@@ -100,7 +100,7 @@ Sau khi xác định được file chứa Ruleset mặc định, bước tiếp 
 
 | Command | Meaning |
 |---|---|
-| ```sed``` | Tìm kiếm đệ quy trong toàn bộ thư mục và thư mục con. |
+| ```sed``` | Stream Editor - Đọc và xử lý văn bản mà không cần mở file. |
 | ```-n``` | Không tự động in toàn bộ nội dung file. |
 | ```58,75p``` | 	In các dòng từ 58 đến 75. |
 | ``` 262,278p``` | 	In các dòng từ 262 đến 278. |
