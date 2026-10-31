@@ -61,7 +61,7 @@ Quá trình này giúp làm rõ cơ chế phát hiện đăng nhập thất bạ
 
 Và **Output** của 2 câu lệnh này cho ta kết quả như sau:
 
-```
+```bash
 /var/ossec/ruleset/rules/0580-win-security_rules.xml:66:    <description>Windows Logon Failure</description>
 /var/ossec/ruleset/rules/0580-win-security_rules.xml:270:    <description>Logon Failure - Unknown user or bad password</description>
 /var/ossec/ruleset/rules/0580-win-security_rules.xml:281:    <description>Logon Failure - Account logon time restriction violation</description>
@@ -79,7 +79,10 @@ Và **Output** của 2 câu lệnh này cho ta kết quả như sau:
 
 Thông qua 2 câu lệnh này ta đã xác định được file chứa ruleset mặc định (0580-win-security_rules.xml), từ đó có thêm dữ liệu để viết custom rule cho chính xác hơn
 
-+ Sau khi xác định được file chứa Ruleset mặc định, bước tiếp theo là phân tích các điều kiện và trường dữ liệu mà Rule sử dụng để kích hoạt cảnh báo.
+---
+
+
+Sau khi xác định được file chứa Ruleset mặc định, bước tiếp theo là phân tích các điều kiện và trường dữ liệu mà Rule sử dụng để kích hoạt cảnh báo.
 
 
 
@@ -131,7 +134,7 @@ Và **Output** của câu lệnh đầu tiên cho ta kết quả như sau:
 
 
 
-```
+```bash
 <rule id="60105" level="5">
     <if_sid>60104</if_sid>
     <field name="win.system.eventID">^529$|^530$|^531$|^532$|^533$|^534$|^535$|^536$|^537$|^539$|^4625$</field>
@@ -155,7 +158,7 @@ Và **Output** của câu lệnh đầu tiên cho ta kết quả như sau:
 
 *Rule ID 60122 – Phân loại nguyên nhân đăng nhập thất bại*
 
-```
+```bash
 <rule id="60122" level="5">
     <if_sid>60105</if_sid>
     <field name="win.system.eventID">^529$|^4625$</field>
@@ -186,6 +189,83 @@ flowchart TD
     style B fill:#fef3c7,stroke:#d97706,color:#78350f
     style C fill:#dcfce7,stroke:#16a34a,color:#14532d
 ```
+
+---
+
+Tiếp đến phân tích **Output** của câu lệnh thứ hai cho kết quả như sau:
+
+```bash
+1126: <rule id="60203" level="10" frequency="$MS_FREQ" timeframe="240">
+1127:   <if_matched_sid>60107</if_matched_sid>
+
+1137: <rule id="60204" level="10" frequency="$MS_FREQ" timeframe="240">
+
+1148: <rule id="60205" level="10" frequency="$MS_FREQ" timeframe="240">
+1149:   <if_matched_sid>60104</if_matched_sid>
+
+1156: <rule id="60206" level="10" frequency="$MS_FREQ" timeframe="240">
+1157:   <if_matched_sid>60102</if_matched_sid>
+
+1162: <rule id="60207" level="10" frequency="$MS_FREQ" timeframe="120">
+1163:   <if_matched_sid>60101</if_matched_sid>
+```
+
+
+|Thành phần |	Giá trị | Ý nghĩa |
+|---|---|---|
+|ID| 60203 – 60207	|ID của các Rule tương quan.|
+|frequency|	$MS_FREQ|	Tần suất xuất hiện để dạt ngưỡng kích hoạt sự kiện theo cấu hình của Rule. |
+| timeframe | 240 hoặc 120 | Khoảng thời gian tính bằng giây để kiểm tra tần suất sự kiện. |
+| if_matched_sid | 60107, 60104... | Tham chiếu Rule ID trước đó. |
+
+--- 
+
+Khảo sát các thành phần cần thiết trước khi xây dựng Custom Rule
+
+
+| Thành phần cần khảo sát | Kết quả |  Ghi chú |
+|---|---|---|
+| Rule nhận diện đăng nhập thất bại | **Đã xác định:** `60122` | Rule mặc định, phân loại trường hợp tài khoản không tồn tại hoặc sai mật khẩu (Event ID `4625`). |
+| Trường dữ liệu tài khoản | **Đã xác định:** `win.eventdata.targetUserName` | Wazuh Discover hiển thị `data.win.eventdata.targetUserName`; khi khai báo trong Rule sử dụng tên trường tương ứng theo cấu trúc dữ liệu của Wazuh. |
+| ID Custom Rule | **Đã lựa chọn:** `100100` | Custom Rule được Wazuh cung cấp các ID `100000` trở lên. |
+| Cú pháp phát hiện theo tần suất | **Đã xác định** | Tham khảo các thuộc tính `frequency`, `timeframe`, `if_matched_sid` và `same_field` trong Ruleset mặc định. |
+| Giá trị biến `$MS_FREQ` | **Chưa xác định** | Cần tìm nơi khai báo biến để xác định ngưỡng số lần xuất hiện sự kiện. |
+| Điều kiện của Rule `60204` | **Chưa xác định được** | Cần kiểm tra nội dung Rule để xác định loại sự kiện và chức năng phát hiện, tránh trùng lặp với Custom Rule `100100`. |
+
+
+Từ những thông tin còn thiếu, quá trình khảo sát sẽ tập trung vào hai nội dung chính:
+
+1. Xác định giá trị $MS_FREQ
+
+Trong các Rule 60203–60207, Wazuh sử dụng biến $MS_FREQ làm giá trị cho thuộc tính frequency. Do đó, cần truy tìm nơi khai báo biến này để xác định chính xác ngưỡng số lần xuất hiện sự kiện và khoảng thời gian tương ứng.
+
+2. Phân tích Rule 60204
+
+Cần kiểm tra toàn bộ nội dung Rule 60204, đặc biệt là các điều kiện <if_matched_sid>, <field>, <same_field> và phần <description>. Việc này giúp xác định Rule đang theo dõi loại sự kiện nào, có liên quan đến đăng nhập thất bại hay không và liệu Custom Rule 100100 có nguy cơ trùng lặp chức năng.
+
+
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
