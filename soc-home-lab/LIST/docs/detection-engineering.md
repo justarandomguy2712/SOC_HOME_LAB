@@ -125,6 +125,80 @@ Thông qua 2 câu lệnh này ta đã xác định được file chứa ruleset 
 
 
 
+Và **Output** của câu lệnh đầu tiên cho ta kết quả như sau:
+
+*Rule ID cha 60105 – Windows Logon Failure*
+
+
+
+```
+<rule id="60105" level="5">
+    <if_sid>60104</if_sid>
+    <field name="win.system.eventID">^529$|^530$|^531$|^532$|^533$|^534$|^535$|^536$|^537$|^539$|^4625$</field>
+    <description>Windows Logon Failure</description>
+    <options>no_full_log</options>
+    <group>authentication_failed,...</group>
+    <mitre>
+      <id>T1078</id>
+    </mitre>
+</rule>
+```
+
+|Thành phần |	Giá trị | Ý nghĩa |
+|---|---|---|
+|ID| 60105	|Rule phát hiện đăng nhập thất bại.|
+|if_sid|	60104|	Chỉ xét sự kiện đã thỏa mãn Rule cha 60104.|
+|field|	win.system.eventID|		Trường dữ liệu chứa mã sự kiện Windows.|
+|Regex|	^529$...^4625$|	Đối chiếu Event ID với danh sách các mã đăng nhập thất bại.|
+|mitre|	T1078	|Liên kết với kỹ thuật Valid Accounts trong MITRE ATT&CK.|
+
+
+*Rule ID 60122 – Phân loại nguyên nhân đăng nhập thất bại*
+
+```
+<rule id="60122" level="5">
+    <if_sid>60105</if_sid>
+    <field name="win.system.eventID">^529$|^4625$</field>
+    <description>Logon Failure - Unknown user or bad password</description>
+</rule>
+```
+
+
+|Thành phần |	Giá trị | Ý nghĩa |
+|---|---|---|
+|ID| 60122	|Rule phát hiện đăng nhập thất bại.|
+|if_sid|	60105|	Rule này phụ thuộc vào Rule 60105.|
+| description | Unknown user or bad password | Tài khoản không tồn tại hoặc mật khẩu không chính xác. |
+
+
+**Sơ đồ mối quan hệ giữa các Rule:**
+
+```mermaid
+flowchart TD
+    A["Rule 60104<br/>Windows audit failure event<br/>Rule cha"] 
+    B["Rule 60105 | Level 5<br/>Windows Logon Failure<br/>Nhận diện các Event ID đăng nhập thất bại"]
+    C["Rule 60122 | Level 5<br/>Unknown user or bad password<br/>Phân loại trường hợp tài khoản không tồn tại hoặc sai mật khẩu"]
+
+    A -->|"if_sid: 60104"| B
+    B -->|"if_sid: 60105"| C
+
+    style A fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style B fill:#fef3c7,stroke:#d97706,color:#78350f
+    style C fill:#dcfce7,stroke:#16a34a,color:#14532d
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -134,6 +208,7 @@ Thông qua 2 câu lệnh này ta đã xác định được file chứa ruleset 
 
 
 Trên Windows (cmd), tạo đăng nhập sai bằng tài khoản không tồn tại, cùng một tên cho mọi lần:
+
 
 
 
