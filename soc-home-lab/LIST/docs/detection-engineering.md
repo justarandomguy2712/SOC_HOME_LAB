@@ -306,37 +306,61 @@ Sự khác biệt giữa hai cơ chế phát hiện được thể hiện như s
 
 ---
 
+Triển khai Custom Rule S01:
+1. Sao lưu cấu hình hiện tại
 
-Và để viết Rule Custom cho S01 thì tham khảo tại repo sau:
-https://github.com/justarandomguy2712/SOC_HOME_LAB/blob/e859daf578dcb80b99d25736597aab715c839728/soc-home-lab/LIST/detection-rules/local_rules.xml
-
-
-
-
-
-
-
-
-
-
-
-
-Trên Windows (cmd), tạo đăng nhập sai bằng tài khoản không tồn tại, cùng một tên cho mọi lần:
-
-
-
-
-
-
+```bash
+sudo cp /var/ossec/etc/rules/local_rules.xml ~/local_rules.xml.bak
 ```
+Copy lưu local_rules.xml.bak trong thư mục Home của người dùng trước khi chỉnh sửa, nhằm bảo đảm có thể khôi phục cấu hình ban đầu khi cần thiết.
+
+2. Bổ sung Custom Rule S01
+
+```bash
+sudo tee -a /var/ossec/etc/rules/local_rules.xml > /dev/null <<'EOF'
+Custom Rule S01
+...
+EOF
+```
+Sử dụng lệnh `tee` với tùy chọn `-a` để nhận dữ liệu từ đầu và write nối tiếp vào cuối file `/var/ossec/etc/rules/local_rules.xml`.
+
+Cấu trúc `<<'EOF'` sử dụng cơ chế **Here-document**, cho phép truyền một khối nội dung nhiều dòng trực tiếp vào lệnh. Quá trình nhập kết thúc khi gặp dòng chứa `EOF`.
+
+- `tee`: Nhận dữ liệu đầu vào và ghi vào file.
+- `-a` (*append*): Ghi nối tiếp, không ghi đè nội dung hiện có.
+- `> /dev/null`: Bỏ dữ liệu được `tee` xuất ra màn hình.
+- `<<'EOF'`: Bắt đầu khối dữ liệu Here-document.
+- `EOF`: Đánh dấu kết thúc khối dữ liệu đầu vào.
+
+Custom Rule S01 được viết tại file này:
+[../../detection-rules/local_rules.xml](../../detection-rules/local_rules.xml)
+
+3. Kiểm tra tính hợp lệ của cấu hình
+
+```bash
+sudo /var/ossec/bin/wazuh-analysisd -t
+```
+Sử dụng công cụ wazuh-analysisd với tùy chọn -t để kiểm tra cấu hình Ruleset, phát hiện lỗi cú pháp hoặc cấu hình không hợp lệ trước khi đưa Rule vào hoạt động.
+
+
+4. Sau đó khởi động lại Wazuh Manager để áp dụng cấu hình:
+
+```bash
+sudo systemctl restart wazuh-manager
+sudo systemctl status wazuh-manager
+```
+
+1.2. Kiểm thử hoạt động Custom Rule S01
+
+Sau khi hoàn tất cấu hình và khởi động lại Wazuh Manager, tiến hành kiểm thử Custom Rule S01 nhằm xác minh khả năng phát hiện các sự kiện đăng nhập Windows thất bại liên tiếp trên cùng một tài khoản.
+
+Trên máy Windows 10 Pro thì thử câu lệnh cmd đặng nhập sai user như sau:
+
+```cmd
 net use \\127.0.0.1\IPC$ /user:fakeuser SaiMatKhau1
 ```
 
 Dùng `fakeuser` để tránh khóa tài khoản thật. Mỗi lần trả `System error 1326`.
-
-### Rule
-
-`100100` trong [../../detection-rules/local_rules.xml](../../detection-rules/local_rules.xml): đếm `60122`, `frequency="5"`, `timeframe="60"`, `same_field` theo `win.eventdata.targetUserName`, level 10.
 
 ### Truy vấn Discover
 
