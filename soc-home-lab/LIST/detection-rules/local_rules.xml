@@ -6,7 +6,7 @@
   <rule id="100100" level="10" frequency="5" timeframe="60">
     <if_matched_sid>60122</if_matched_sid>
     <same_field>win.eventdata.targetUserName</same_field>
-    <description>SOC-LAB S01: Multiple failed Windows logons for the same account within 60 seconds</description>
+    <description>SOC-LAB S01: Nghiem Cam Hanh Vi Brute Force</description>
     <mitre>
       <id>T1110</id>
     </mitre>
